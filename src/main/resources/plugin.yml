@@ -1,5 +1,6 @@
 name: Thesieutoc
 main: net.thesieutoc.Thesieutoc
+author: [Thesieutoc, Javalorant]
 version: '#28'
 softdepend: [ PlaceholderAPI ]
 api-version: 1.13

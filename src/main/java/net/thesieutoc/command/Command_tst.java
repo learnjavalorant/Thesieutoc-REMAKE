@@ -3,6 +3,10 @@
 package net.thesieutoc.command;
 
 import com.google.gson.JsonObject;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -17,6 +21,7 @@ import java.util.Map;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.thesieutoc.Thesieutoc;
 import net.thesieutoc.card.CardPrice;
+import net.thesieutoc.utils.DiscordWebhook;
 import net.thesieutoc.utils.Task;
 import net.thesieutoc.utils.Utils;
 import org.bukkit.Bukkit;
@@ -86,6 +91,8 @@ public class Command_tst
             sender.sendMessage(PlaceholderAPI.setPlaceholders((Player)((Object)sender), args[1]));
         }
         if (args.length >= 1 && args[0].equalsIgnoreCase("give")) {
+            Date now = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm dd/MM/yyyy");
             if (sender.hasPermission("thesieutoc.admin") || !(sender instanceof Player)) {
                 switch (args.length) {
                     case 2: {
@@ -109,6 +116,34 @@ public class Command_tst
                             this.m.WEB_CALLBACK.napthanhcong(target, json);
                             Thesieutoc.getInstance().db.writeLog(target, json);
                             sender.sendMessage("§aNạp thành công §f" + menhgia + "§a VNĐ cho " + target.getName() + "!");
+
+                            String playername = target.getName();
+                            DiscordWebhook webhook = new DiscordWebhook(m.getDiscordWebhook().getString("WebHookAPI"));
+                            webhook.setContent(m.getDiscordWebhook().getString("Content"));
+                            webhook.setAvatarUrl("https://minotar.net/helm/" + playername + "/100.png");
+                            webhook.setUsername(m.getDiscordWebhook().getString("WebhookName"));
+                            webhook.addEmbed(new DiscordWebhook.EmbedObject()
+                                    .setTitle(m.getDiscordWebhook().getString("Title_ThanhCong"))
+                                    .setDescription("Người chơi " + playername + " đã nạp thẻ " + json.get("cardprice").getAsString() + " thành công!!!!")
+                                    .setColor(Color.RED)
+                                    .addField("["+ df.format(now) +"]", "NGƯỜI CHƠI: " + playername + "", false)
+                                    .addField("SERI:", "||" + json.get("seri").getAsString() +"||", true)
+                                    .addField("MÃ THẺ:", "||" + json.get("pin").getAsString() +"||", true)
+                                    .addField("MỆNH GIÁ:", "||" + json.get("cardprice").getAsString() +"||", true)
+                                    .addField("LOẠI THẺ:", "||" + json.get("cardtype").getAsString() +"||", true)
+                                    .addField("TRẠNG THÁI:", m.getDiscordWebhook().getString("Status_ThanhCong"), false)
+                                    .setThumbnail(m.getDiscordWebhook().getString("Thumbnail_URL"))
+                                    .setFooter(m.getDiscordWebhook().getString("FooterContent"), m.getDiscordWebhook().getString("Footer_URL"))
+                                    .setImage(m.getDiscordWebhook().getString("Image_URL"))
+                                    .setAuthor(m.getDiscordWebhook().getString("AuthorName"), m.getDiscordWebhook().getString("Author_URL"), m.getDiscordWebhook().getString("Avatar_Author_URL"))
+                                    .setUrl(m.getDiscordWebhook().getString("Title_URL")));
+                            try {
+                                webhook.execute();
+                            } catch (MalformedURLException e) {
+                                System.out.println("[MinecraftDiscordWebhook] Invalid webhook URL");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         }
                         sender.sendMessage("§cNgười chơi §e" + args[1] + "§c không online!");

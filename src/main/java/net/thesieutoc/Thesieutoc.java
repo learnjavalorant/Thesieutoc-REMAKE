@@ -221,8 +221,8 @@ public class Thesieutoc extends JavaPlugin {
         this.saveDefaultDiscord();
     }
     public void reloadKey() {
-        this.API_key = m.getConfig().getString("TheSieuToc-API.key");
-        this.API_secret = m.getConfig().getString("TheSieuToc-API.secret");
+        this.API_key = m.getConfig().getString("A75B67E3ABDA37AA25C45D1722B11965");
+        this.API_secret = m.getConfig().getString("821A7E10EC4C1C1E9E4B5181E728769E");
     }
 
     public void dispatchCommand(Player player, String command) {
